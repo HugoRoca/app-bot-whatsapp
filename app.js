@@ -1,4 +1,4 @@
-const { Client } = require("whatsapp-web.js");
+const { Client, MessageMedia } = require("whatsapp-web.js");
 const qrCode = require("qrcode-terminal");
 const fs = require("fs");
 const ora = require("ora");
@@ -64,7 +64,29 @@ const withOutSession = () => {
 const listenMessage = () => {
   client.on('message', (msg) => {
     const { from, to, body } = msg
+    let message = ''
+
+    switch (body) {
+      case 'quiero_info':
+        message = 'What do you want information about? NODE, PHP o ANGULAR?'
+        break;
+      case 'adios':
+        message = 'See you later! Remember'
+        break
+      case 'hello':
+        sendMedia(from, 'course.png')
+        break;
+      default:
+        break;
+    }
+    console.log(`${chalk.yellow(body)}`)
+    if (message !== '') sendMessage(from, message)
   })
+}
+
+const sendMedia = (to, file) => {
+  const mediaFile = MessageMedia.fromFilePath(`./media-send/${file}`)
+  client.sendMessage(to, mediaFile)
 }
 
 /**
